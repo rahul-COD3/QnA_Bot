@@ -1,5 +1,5 @@
 from msilib.schema import File
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile
 
 app = FastAPI()
 
