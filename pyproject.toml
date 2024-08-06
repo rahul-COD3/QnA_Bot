@@ -14,6 +14,7 @@ sqlalchemy = {extras = ["asyncio"], version = "^2.0.32"}
 azure-search-documents = "^11.5.1"
 azure-identity = "^1.17.1"
 asyncpg = "^0.29.0"
+azure-storage-blob = "^12.21.0"
 
 
 [build-system]

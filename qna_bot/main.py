@@ -1,7 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from qna_bot.src.models.seed_data import SeedData
+from qna_bot.src.config.seed_data import SeedData
 from contextlib import asynccontextmanager
+from qna_bot.src.services.azure_blob_service import AzureBlobUploader
+from qna_bot.src.routers import data_upload
 
 
 @asynccontextmanager
@@ -10,8 +12,10 @@ async def lifespan(app: FastAPI):
     await seed_data.seed()
 
     yield
+    seed_data.clear()
 
 app = FastAPI(lifespan=lifespan)
+app.include_router(data_upload.router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -24,6 +28,9 @@ app.add_middleware(
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
+
+# Initialize the Azure Blob Uploader
+blob_uploader = AzureBlobUploader()
 
 if __name__ == "__main__":
     import uvicorn

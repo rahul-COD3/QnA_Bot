@@ -1,5 +1,5 @@
 from sqlalchemy.future import select
-from qna_bot.db import AsyncSessionLocal
+from qna_bot.src.config.db import AsyncSessionLocal
 from qna_bot.src.models.model import User, Bot
 from sqlalchemy.ext.asyncio import AsyncSession
 
