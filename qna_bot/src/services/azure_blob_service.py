@@ -1,7 +1,7 @@
 import os
 from azure.identity import DefaultAzureCredential
 from azure.storage.blob import BlobServiceClient
-from qna_bot.src.constants.document_upload import FILE_UPLOAD_SUCCESS, FILE_UPLOAD_ERROR
+from qna_bot.src.constants.messages import FILE_UPLOAD_SUCCESS, FILE_UPLOAD_ERROR
 from qna_bot.src.utils.api_response import Response
 from dotenv import load_dotenv
 import logging
@@ -48,6 +48,20 @@ class AzureBlobUploader:
             logger.info(f"Blob uploaded successfully: {blob_name}")
             return Response(data=FILE_UPLOAD_SUCCESS)
 
+        except Exception as e:
+            logger.error(f"An unexpected error occurred: {str(e)}")
+            return Response(error_message=FILE_UPLOAD_ERROR)
+
+    async def list_blobs(self):
+        """
+        Lists all blobs in the Azure Blob Storage container.
+        :return: List of blob names.
+        """
+        try:
+            container_client = self.blob_service_client.get_container_client(self.container_name)
+            blobs = container_client.list_blobs()
+            blob_names = [blob.name for blob in blobs]
+            return Response(data=blob_names)
         except Exception as e:
             logger.error(f"An unexpected error occurred: {str(e)}")
             return Response(error_message=FILE_UPLOAD_ERROR)

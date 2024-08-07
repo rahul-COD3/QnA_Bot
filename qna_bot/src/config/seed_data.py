@@ -1,7 +1,6 @@
 from sqlalchemy.future import select
 from qna_bot.src.config.db import AsyncSessionLocal
-from qna_bot.src.models.model import User, Bot
-from sqlalchemy.ext.asyncio import AsyncSession
+from qna_bot.src.models.model import DataSource, DataSourceType, DataSpace, User, Bot
 
 class SeedData:
     def __init__(self):
@@ -43,3 +42,29 @@ class SeedData:
                     created_by=user.id
                 )
                 await self.save_bot(bot)
+
+            # check DataSpace exists
+            result = await self.db.execute(select(DataSpace))
+            data_space = result.scalars().first()
+            if not data_space:
+                data_space = DataSpace(
+                    name="DataSpace",
+                    description="A data space",
+                    created_by=user.id
+                )
+                self.db.add(data_space)
+                await self.db.commit()
+                await self.db.refresh(data_space)
+
+            # check DataSources exists
+            result = await self.db.execute(select(DataSource))
+            data_source = result.scalars().first()
+            if not data_source:
+                data_source = DataSource(
+                    type=DataSourceType.DOCUMENT,
+                    location="daefc74c-e48b-48a6-9ca9-0b076a1d215c_wallpaperflare.com_wallpaper.jpg",
+                    data_space_id=data_space.id
+                )
+                self.db.add(data_source)
+                await self.db.commit()
+                await self.db.refresh(data_source)
